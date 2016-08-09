@@ -603,7 +603,6 @@ public class KolodaView: UIView, DraggableCardDelegate {
         guard let dataSource = dataSource else {
             return
         }
-        
         let currentItemsCount = countOfCards
         countOfCards = Int(dataSource.kolodaNumberOfCards(self))
         
@@ -612,14 +611,24 @@ public class KolodaView: UIView, DraggableCardDelegate {
         let cardsToRemove = visibleCards.dropFirst(countOfVisibleCards).map { $0 }
         removeCards(cardsToRemove, animated: animated)
         animator.resetBackgroundCardsWithCompletion()
+        let delegateNotifyAction = { [weak self] in
+            guard let _self = self else { return }
+            guard visibleIndexes.count > 0 else { return }
+            if visibleIndexes.minElement() == _self.currentCardIndex {
+                _self.delegate?.koloda(_self, didShowCardAtIndex: UInt(_self.currentCardIndex))
+            }
+        }
         if animated {
             animating = true
             animator.applyInsertionAnimation(
                 insertedCards,
                 completion: { _ in
                     self.animating = false
+                    delegateNotifyAction()
                 }
             )
+        } else {
+            delegateNotifyAction()
         }
         
         assert(

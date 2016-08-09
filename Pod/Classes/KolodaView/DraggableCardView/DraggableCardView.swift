@@ -81,6 +81,7 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func setup() {
+        autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DraggableCardView.panGestureRecognized(_:)))
         addGestureRecognizer(panGestureRecognizer)
         panGestureRecognizer.delegate = self
